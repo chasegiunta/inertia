@@ -1,10 +1,10 @@
 <?php
 
-namespace wsydney76\inertia\web;
+namespace chasegiunta\inertia\web;
 
 use Craft;
 use craft\helpers\App;
-use wsydney76\inertia\Inertia;
+use chasegiunta\inertia\Plugin as Inertia;
 
 /**
  *
@@ -107,4 +107,10 @@ class Controller extends \craft\web\Controller
     {
         return $this->only;
     }
+
+    public function actionEcho()
+    {
+        return $this->asJson(['ping' => 'Pong!']);
+    }
+
 }

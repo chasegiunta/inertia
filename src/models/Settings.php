@@ -1,7 +1,8 @@
 <?php
 
-namespace wsydney76\inertia\models;
+namespace chasegiunta\inertia\models;
 
+use Craft;
 use craft\base\Model;
 
 class Settings extends Model

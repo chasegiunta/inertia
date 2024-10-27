@@ -1,6 +1,6 @@
 <?php
 
-namespace wsydney76\inertia\web;
+namespace chasegiunta\inertia\web;
 
 use Craft;
 use yii\web\JsonParser;

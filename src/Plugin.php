@@ -1,39 +1,43 @@
 <?php
 
-namespace wsydney76\inertia;
+namespace chasegiunta\inertia;
 
 use Craft;
 use craft\base\Model;
-use craft\base\Plugin;
+use craft\base\Plugin as BasePlugin;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\App;
 use craft\web\Application;
 use craft\web\View;
-use wsydney76\inertia\models\Settings;
+
+use craft\events\RegisterUrlRulesEvent;
+use craft\web\UrlManager;
+
+use chasegiunta\inertia\models\Settings;
 use yii\base\Event;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
-class Inertia extends Plugin
+class Plugin extends BasePlugin
 {
+    public static function config(): array
+    {
+        return [
+            'components' => [
+                // Define component configs here...
+            ],
+        ];
+    }
 
     /**
      * @inheritDoc
      */
     public function init()
     {
-
         parent::init();
 
-
-        // Enable use of default template on the frontend
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-            function(RegisterTemplateRootsEvent $event) {
-                $event->roots['inertia'] = __DIR__ . '/templates';
-            }
-        );
+        $this->attachEventHandlers();
+        // exit($this->getSettings()->view);
 
         // Don't do anything if it is not a frontend request
         if (Craft::$app->request->isSiteRequest) {
@@ -43,6 +47,12 @@ class Inertia extends Plugin
             Craft::$app->on(Application::EVENT_AFTER_REQUEST, [$this, 'applicationAfterRequestHandler']);
             Craft::$app->response->on(Response::EVENT_BEFORE_SEND, [$this, 'responseBeforeSendHandler']);
         }
+
+        // Any code that creates an element query or loads Twig should be deferred until
+        // after Craft is fully initialized, to avoid conflicts with other plugins/modules
+        Craft::$app->onInit(function () {
+            // ...
+        });
     }
 
     /**
@@ -207,9 +217,39 @@ class Inertia extends Plugin
     /*
      * Plugin settings
      */
-    protected function createSettingsModel(): Model
+    protected function createSettingsModel(): ?Model
     {
-        return new Settings();
+        return Craft::createObject(Settings::class);
+    }
+
+    private function attachEventHandlers(): void
+    {
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules = array_merge($event->rules, [
+                    '' => 'frontend/site/index',
+                    'posts' => 'frontend/post/index',
+                    'posts/<slug:[^\/]+>' => 'frontend/post/post',
+                    'topics' => 'frontend/topic/index',
+                    'topics/<slug:[^\/]+>' => 'frontend/topic/topic',
+                    'POST contact' => 'frontend/contact/send',
+                    'contact' => 'frontend/contact/form',
+                    'contact/confirm' => 'frontend/contact/confirm',
+                    'empty' => 'frontend/site/empty'
+                ]);
+            }
+        );
+
+        // Enable use of default template on the frontend
+        Event::on(
+            View::class,
+            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+            function (RegisterTemplateRootsEvent $event) {
+                $event->roots['inertia'] = __DIR__ . '/templates';
+            }
+        );
     }
 
 }

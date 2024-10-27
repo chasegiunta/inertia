@@ -2,27 +2,26 @@
 
 This is a Craft CMS server-side adapter for [Inertia](https://inertiajs.com).
 
-__This is a Proof of Concept, please consider it as experimental.__
+**This is a Proof of Concept, please consider it as experimental.**
 
 Based on the [Yii 2 server-side adapter](https://github.com/tbreuss/yii2-inertia).
 
-[Demo project](https://github.com/wsydney76/craft_inertia)
+[Demo project](https://github.com/chasegiunta/craft_inertia)
 
-With Inertia you are able to build single-page apps using classic server-side routing and controllers, without building an API. 
+With Inertia you are able to build single-page apps using classic server-side routing and controllers, without building an API.
 
 To use Inertia you need both a server-side adapter as well as a client-side adapter.
- 
+
 Be sure to follow the installation instructions for the [client-side framework](https://inertiajs.com/client-side-setup) you use.
 
 Example setup using Vue 3, Tailwind CSS and Laravel Mix included in `examples/build`.
-
 
 ## Installation
 
 Install via Composer:
 
 ```sh
-composer require wsydney76/inertia:1.1-beta.2
+composer require chasegiunta/inertia:1.1-beta.2
 php craft plugin/install inertia
 ```
 
@@ -32,7 +31,7 @@ Edit `config/app.web.php`:
 <?php
 
 use config\Env;
-use wsydney76\inertia\web\Request;
+use chasegiunta\inertia\web\Request;
 
 
 return [
@@ -50,7 +49,7 @@ return [
 
 ## Controllers
 
-Your backend controllers should extend from `wsydney76\inertia\web\Controller`.
+Your backend controllers should extend from `chasegiunta\inertia\web\Controller`.
 
 See examples in `examples` folder.
 
@@ -59,7 +58,7 @@ See examples in `examples` folder.
 
 namespace app\controllers;
 
-use wsydney76\inertia\web\Controller;
+use chasegiunta\inertia\web\Controller;
 
 class DemoController extends Controller
 {
@@ -76,7 +75,7 @@ class DemoController extends Controller
 
 ## Routing
 
-Use your Craft CMS server-side routes as usual. 
+Use your Craft CMS server-side routes as usual.
 There is nothing special.
 
 ## CSRF protection
@@ -84,7 +83,7 @@ There is nothing special.
 Axios is the HTTP library that Inertia uses under the hood.
 Yii's CSRF protection is not optimized for Axios.
 
-The easiest way to implement CSRF protection is using the customized `wsydney76\inertia\web\Request` component. 
+The easiest way to implement CSRF protection is using the customized `chasegiunta\inertia\web\Request` component.
 Simply edit `config/app.web.php` file as shown above.
 
 CSRF-Protection is experimental!
@@ -93,11 +92,11 @@ Please see the [security page](https://inertiajs.com/security) for more details.
 
 ### Shared data
 
-The Craft CMS adapter provides a way to preassign shared data for each request. 
-This is typically done outside of your controllers. 
+The Craft CMS adapter provides a way to preassign shared data for each request.
+This is typically done outside of your controllers.
 Shared data will be automatically merged with the page props provided in your controller.
 
-Massive assignment of shared data:  
+Massive assignment of shared data:
 
 ```php
 <?php
@@ -149,7 +148,7 @@ class SharedDataFilter extends ActionFilter
         Inertia::getInstance()->share($shared);
         return true;
     }
-}    
+}
 ```
 
 And then use this action filter as a behaviour in your controller.
@@ -160,7 +159,7 @@ And then use this action filter as a behaviour in your controller.
 namespace modules\frontend\controllers;
 
 use app\components\SharedDataFilter;
-use wsydney76\inertia\web\Controller;
+use chasegiunta\inertia\web\Controller;
 
 class ContactController extends Controller
 {
@@ -172,7 +171,7 @@ class ContactController extends Controller
             ]
         ];
     }
-    
+
     public function actionIndex()
     {
         // your action code
@@ -196,7 +195,7 @@ You can check for this in your controller via `$this->getOnly()` or `$this->chec
 
 Create a `config/inertia.php` file.
 
-Example content: 
+Example content:
 
 ```php
 <?php
@@ -212,7 +211,7 @@ return [
 
 Possible settings:
 
-**view** 
+**view**
 
 The twig template used to render the inital request.
 
@@ -244,10 +243,39 @@ Internal key for shared props. No need to change this.
 
 ## Client-side setup
 
-To use Inertia you need to setup your client-side framework. 
-This primarily includes updating your main JavaScript file to boot the Inertia app. 
+To use Inertia you need to setup your client-side framework.
+This primarily includes updating your main JavaScript file to boot the Inertia app.
 Please see the [client-side setup page](https://inertiajs.com/client-side-setup) for more details.
 
 ## More about Inertia
 
 Visit [inertiajs.com](https://inertiajs.com/) to learn more.
+
+---
+
+## Requirements
+
+This plugin requires Craft CMS 5.4.0 or later, and PHP 8.2 or later.
+
+## Installation
+
+You can install this plugin from the Plugin Store or with Composer.
+
+#### From the Plugin Store
+
+Go to the Plugin Store in your project’s Control Panel and search for “inertia”. Then press “Install”.
+
+#### With Composer
+
+Open your terminal and run the following commands:
+
+```bash
+# go to the project directory
+cd /path/to/my-project.test
+
+# tell Composer to load the plugin
+composer require chasegiunta/craft-inertia
+
+# tell Craft to install the plugin
+./craft plugin/install inertia
+```
