@@ -31,4 +31,22 @@ class Settings extends Model
      *  Supports environment variables and aliases.
      */
     public array $assetsDirs = ['@webroot/assets'];
+
+    /**
+     * Whether to inject the element automatically into the frontend response
+     * @var bool
+     */
+    public bool $injectElement = false;
+
+    /**
+     * The template directory where the Inertia backing logic is stored
+     * @var string|null
+     */
+    public string|null $inertiaDirectory = null;
+
+    /**
+     * The path to a Shared backing template
+     * @var string|null
+     */
+    public string|null $sharedPath = null;
 }

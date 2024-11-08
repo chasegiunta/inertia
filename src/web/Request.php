@@ -7,7 +7,6 @@ use yii\web\JsonParser;
 
 class Request extends \craft\web\Request
 {
-
     // Set token name as expected by Inertia JS (using axios behind the scenes)
 
     public const CSRF_HEADER = 'X-XSRF-TOKEN';
@@ -18,8 +17,8 @@ class Request extends \craft\web\Request
 
     public function init(): void
     {
+        exit('request? is this even used?');
         parent::init();
-
         $this->parsers['application/json'] = JsonParser::class;
     }
 

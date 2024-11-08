@@ -3,17 +3,18 @@
 namespace chasegiunta\inertia;
 
 use Craft;
+use chasegiunta\inertia\models\Settings;
+use chasegiunta\inertia\web\twig\InertiaExtension;
+use craft\base\Element;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\events\RegisterTemplateRootsEvent;
+use craft\events\RegisterUrlRulesEvent;
+use craft\events\SetElementRouteEvent;
 use craft\helpers\App;
 use craft\web\Application;
-use craft\web\View;
-
-use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
-
-use chasegiunta\inertia\models\Settings;
+use craft\web\View;
 use yii\base\Event;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
@@ -53,6 +54,7 @@ class Plugin extends BasePlugin
         Craft::$app->onInit(function () {
             // ...
         });
+        Craft::$app->view->registerTwigExtension(new InertiaExtension());
     }
 
     /**
@@ -68,9 +70,9 @@ class Plugin extends BasePlugin
 
         $request = Craft::$app->request;
         if ($request->isPost) {
-            if ($request->getCsrfTokenFromHeader() === null) {
-                throw new BadRequestHttpException('Unable to verify your data submission.');
-            }
+            // if ($request->getCsrfTokenFromHeader() === null) {
+            //     throw new BadRequestHttpException('Unable to verify your data submission.');
+            // }
         }
     }
 
@@ -229,15 +231,19 @@ class Plugin extends BasePlugin
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules = array_merge($event->rules, [
-                    '' => 'frontend/site/index',
-                    'posts' => 'frontend/post/index',
-                    'posts/<slug:[^\/]+>' => 'frontend/post/post',
-                    'topics' => 'frontend/topic/index',
-                    'topics/<slug:[^\/]+>' => 'frontend/topic/topic',
-                    'POST contact' => 'frontend/contact/send',
-                    'contact' => 'frontend/contact/form',
-                    'contact/confirm' => 'frontend/contact/confirm',
-                    'empty' => 'frontend/site/empty'
+                    // '' => 'inertia/base/index',
+                    // '' => ['template' => 'inertia/index'],
+    
+                    // '' => 'frontend/site/index',
+                    // 'posts' => 'frontend/post/index',
+                    // 'posts/<slug:[^\/]+>' => 'frontend/post/post',
+                    // 'topics' => 'frontend/topic/index',
+                    // 'topics/<slug:[^\/]+>' => 'frontend/topic/topic',
+                    // 'POST contact' => 'frontend/contact/send',
+                    // 'contact' => 'frontend/contact/form',
+                    // 'contact/confirm' => 'frontend/contact/confirm',
+                    // 'empty' => 'frontend/site/empty'
+    
                 ]);
             }
         );
@@ -248,6 +254,24 @@ class Plugin extends BasePlugin
             View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
             function (RegisterTemplateRootsEvent $event) {
                 $event->roots['inertia'] = __DIR__ . '/templates';
+            }
+        );
+
+
+        // Catch element routes set in Craft's CP
+        // and route them to the Inertia controller
+        Event::on(
+            Element::class,
+            Element::EVENT_SET_ROUTE,
+            function (SetElementRouteEvent $event) {
+                // $element = $event->sender;
+                // exit(dd($element));
+    
+                $event->route = 'inertia/base/index';
+
+                // Explicitly tell the element that a route has been set,
+                // and prevent other event handlers from running
+                $event->handled = true;
             }
         );
     }

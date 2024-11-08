@@ -24,6 +24,7 @@ class Controller extends \craft\web\Controller
      */
     public function beforeAction($action): bool
     {
+        exit('beforeAction in web controller');
         if (Craft::$app->request->headers->has('X-Inertia-Partial-Data')) {
             $this->only = Craft::$app->request->headers->get('X-Inertia-Partial-Data');
         }
@@ -106,11 +107,6 @@ class Controller extends \craft\web\Controller
     public function getOnly(): ?string
     {
         return $this->only;
-    }
-
-    public function actionEcho()
-    {
-        return $this->asJson(['ping' => 'Pong!']);
     }
 
 }
