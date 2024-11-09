@@ -128,9 +128,11 @@ class BaseController extends Controller
      */
     private function getInertiaProps($params = []): array
     {
+        $sharedProps = $this->getSharedPropsFromTemplate();
         return array_merge(
             Inertia::getInstance()->getShared(),
-            $params
+            $params,
+            $sharedProps
         );
     }
 
@@ -222,6 +224,28 @@ class BaseController extends Controller
 
         $matchesTwigTemplate = Craft::$app->getView()->doesTemplateExist($specifiedTemplate);
         return [$matchesTwigTemplate, $specifiedTemplate, $templateVariables];
+    }
+
+    private function getSharedPropsFromTemplate()
+    {
+        $inertiaConfiguredDirectory = Inertia::getInstance()->settings->inertiaDirectory ?? null;
+        $inertiaTemplatePath = $inertiaConfiguredDirectory ? $inertiaConfiguredDirectory . '/shared' : 'shared';
+
+        $matchesTwigTemplate = Craft::$app->getView()->doesTemplateExist($inertiaTemplatePath);
+
+        if (!$matchesTwigTemplate) {
+            return [];
+        }
+
+        $stringResponse = Craft::$app->getView()->renderTemplate($inertiaTemplatePath);
+
+        // Decode JSON object from $stringResponse
+        $jsonData = json_decode($stringResponse, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception('Failed to decode JSON response: ' . json_last_error_msg());
+        }
+
+        return $jsonData;
     }
 
 }
