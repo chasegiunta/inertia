@@ -274,6 +274,18 @@ class Plugin extends BasePlugin
                 $event->handled = true;
             }
         );
+
+
+        // After validation, set the current element to be used in the controller
+        // so that validation errors can be injected into the template
+        Event::on(
+            Element::class,
+            Element::EVENT_AFTER_VALIDATE,
+            function (Event $event) {
+                $element = $event->sender;
+                Craft::$container->set('currentElement', $element);
+            }
+        );
     }
 
 }

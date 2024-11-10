@@ -46,6 +46,13 @@ class BaseController extends Controller
         if ($matchesTwigTemplate) {
             $template = $specifiedTemplate ?? $inertiaTemplatePath;
 
+            if (Craft::$container->has('currentElement')) {
+                // We're probably validating an element in a form
+                // And need to give to give it the user to get validation errors
+                $element = Craft::$container->get('currentElement');
+                $templateVariables['element'] = $element;
+            }
+
             $stringResponse = Craft::$app->getView()->renderTemplate($template, $templateVariables);
 
             // Decode JSON object from $stringResponse
