@@ -9,6 +9,8 @@ use craft\web\View;
 use craft\web\UrlManager;
 use craft\helpers\ElementHelper;
 
+use craft\services\Elements;
+
 use chasegiunta\inertia\Plugin as Inertia;
 
 /**
@@ -29,7 +31,7 @@ class BaseController extends Controller
         $uri = $request->getPathInfo();
 
         $urlManager = new UrlManager();
-        $element = $urlManager->getMatchedElement();
+        $element = $urlManager->getMatchedElement() ?: (new Elements)->getElementByUri($uri);
 
         $templateVariables = [];
         $matchesTwigTemplate = false;
