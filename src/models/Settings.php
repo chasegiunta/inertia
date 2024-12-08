@@ -36,7 +36,7 @@ class Settings extends Model
      * Whether to inject the element automatically into the frontend response
      * @var bool
      */
-    public bool $injectElement = false;
+    public bool $injectElementAsProp = false;
 
     /**
      * The template directory where the Inertia backing logic is stored

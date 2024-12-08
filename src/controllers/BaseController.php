@@ -67,7 +67,7 @@ class BaseController extends Controller
             $props = $jsonData['props'] ?? [];
 
 
-            if (Inertia::getInstance()->settings->injectElement !== true) {
+            if (Inertia::getInstance()->settings->injectElementAsProp !== true) {
                 unset($templateVariables['element']);
             }
 
